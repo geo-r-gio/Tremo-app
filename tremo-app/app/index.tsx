@@ -3,6 +3,7 @@ import Animated, { useAnimatedRef, useAnimatedScrollHandler, useSharedValue } fr
 import data, { OnboardingData } from '../data/onboarding';
 import RenderItem from "@/components/RenderItem";
 import Pagination from "@/components/Pagination";
+import CustomButton from "@/components/CustomButton";
 
 export default function Index() {
   const flatlistRef = useAnimatedRef<FlatList<OnboardingData>>();
@@ -44,6 +45,12 @@ export default function Index() {
       />
       <View style={styles.bottomContainer}>
         <Pagination data={data} x={x}/>
+        <CustomButton 
+          flatlistRef={flatlistRef}
+          flatlistIndex={flatlistIndex}
+          dataLength={data.length}
+          x={x}
+        />
       </View>
     </View>
   );
@@ -59,6 +66,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     marginHorizontal: 30,
-    paddingVertical: 30
+    paddingVertical: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 });

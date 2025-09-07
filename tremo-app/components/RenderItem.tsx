@@ -61,7 +61,11 @@ const RenderItem = ({item, index, x}: Props) => {
             <Animated.View style={lottieAnimationStyle}>
                 <LottieView
                     source={item.animation} 
-                    style={{width: SCREEN_WIDTH * 0.9, height: SCREEN_WIDTH * 0.9}}
+                    style={{
+                        width: index === 0 ? SCREEN_WIDTH * 1.2 : SCREEN_WIDTH * 0.9, 
+                        height: index === 0 ? SCREEN_WIDTH * 1.2 : SCREEN_WIDTH * 0.9,
+                        marginTop: index === 0 ? -90 : 0,
+                    }}
                     autoPlay
                     loop
                 />
@@ -76,9 +80,9 @@ export default RenderItem
 const styles = StyleSheet.create({
     itemContainer: {
         flex: 1,
-        justifyContent: 'space-around',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
-        marginBottom: 120,
+        marginBottom: 140,
     },
     itemText: {
         textAlign: 'center',
