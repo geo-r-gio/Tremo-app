@@ -2,6 +2,7 @@ import { FlatList, StyleSheet, TouchableWithoutFeedback, useWindowDimensions } f
 import React from 'react'
 import Animated, { AnimatedRef, interpolateColor, SharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated'
 import { OnboardingData } from '@/data/onboarding';
+import { useRouter } from 'expo-router';
 
 type Props = {
     dataLength: number;
@@ -12,6 +13,8 @@ type Props = {
 
 const CustomButton = ({dataLength, flatlistIndex, flatlistRef, x}: Props) => {
     const {width: SCREEN_WIDTH} = useWindowDimensions();
+
+    const router = useRouter();
 
     const buttonAnimationStyle = useAnimatedStyle(() => {
         return {
@@ -60,7 +63,8 @@ const CustomButton = ({dataLength, flatlistIndex, flatlistRef, x}: Props) => {
                 if(flatlistIndex.value < dataLength - 1){
                     flatlistRef.current?.scrollToIndex({index: flatlistIndex.value + 1})
                 } else {
-                    console.log('NAVIGATE TO NEXT SCREEN')
+                    //console.log('NAVIGATE TO NEXT SCREEN')
+                    router.push("/signin")
                 }
             }}
         >
