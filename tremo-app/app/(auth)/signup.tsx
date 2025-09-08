@@ -19,7 +19,7 @@ const Signup = () => {
 
     const handleSubmit = async () => {
         if(!emailRef.current || !passwordRef.current || !nameRef.current){
-            Alert.alert('Sign In', "Please fill in all the fields");
+            Alert.alert('Sign Up', "Please fill in all the fields");
             return;
         }
 
@@ -48,7 +48,7 @@ const Signup = () => {
             </Text>
             <Input 
                 placeholder='Enter your name'
-                onChangeText={(value) => (emailRef.current = value)}
+                onChangeText={(value) => (nameRef.current = value)}
                 icon={<Icons.UserIcon size={verticalScale(26)}/>}
             />
             <Input 
