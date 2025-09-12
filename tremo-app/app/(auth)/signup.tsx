@@ -42,6 +42,8 @@ const Signup = () => {
             Alert.alert('Sign Up', response.msg)
         }
 
+        router.replace('../home');
+
         console.log('name: ', nameRef.current);
         console.log('email: ', emailRef.current);
         console.log('password: ', passwordRef.current);
