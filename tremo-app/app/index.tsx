@@ -44,7 +44,7 @@ export default function Index() {
       }}
       />
       <View style={styles.bottomContainer}>
-        <Pagination data={data} x={x}/>
+        <Pagination length={data.length} x={x}/>
         <CustomButton 
           flatlistRef={flatlistRef}
           flatlistIndex={flatlistIndex}

@@ -1,91 +1,92 @@
-import React, { useState } from 'react';
-import { StyleSheet, Pressable, View } from 'react-native';
-import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
-import { MotiView } from 'moti';
-import { Easing, withTiming } from 'react-native-reanimated';
-import * as Icons from 'phosphor-react-native';
+import React, { useRef } from 'react';
+import { StyleSheet, View, FlatList, Dimensions } from 'react-native';
+import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
+import GradientButton from '../../components/GradientButton';
+import RadialVariant from '../../components/RadialVariant';
+import Pagination from '../../components/Pagination';
 
-const BUTTON_SIZE = 120;
+const { width } = Dimensions.get('window');
 
-const GradientButton: React.FC = () => {
-    const [animateRipple, setAnimateRipple] = useState(false);
+const Index = () => {
+  const x = useSharedValue(0);
+  const flatListRef = useRef<FlatList>(null);
 
-    const handlePress = () => {
-        setAnimateRipple(prev => !prev);
-    };
+  const data = [
+    { key: '1', component: <GradientButton /> },
+    { key: '2', component: <RadialVariant /> },
+  ];
+
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      x.value = event.contentOffset.x;
+    },
+  });
 
   return (
-    <Pressable onPress={handlePress} style={styles.buttonWrapper}>
-      <View style={styles.buttonContainer}>
-        {/* Ripple / animated background */}
-        {[...Array(3).keys()].map(index => (
-          <MotiView
-            from={{ opacity: 0.7, scale: 1 }}
-            animate={animateRipple ? { opacity: 0, scale: 2 } : { opacity: 0.7, scale: 1 }}
-            transition={{
-              type: 'timing',
-              duration: 2000,
-              easing: Easing.out(Easing.ease),
-              delay: index * 400,
-              repeatReverse: false,
-              loop: animateRipple,
-            }}
-            key={index}
-            style={[StyleSheet.absoluteFillObject, styles.dot]}
-          />
-        ))}
-
-        {/* Gradient circle */}
-        <Svg height={BUTTON_SIZE} width={BUTTON_SIZE}>
-          <Defs>
-            <LinearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor="#6baccd" stopOpacity="1" />
-              <Stop offset="100%" stopColor="#0c5197" stopOpacity="1" />
-            </LinearGradient>
-          </Defs>
-
-          <Rect
-            x="0"
-            y="0"
-            width={BUTTON_SIZE}
-            height={BUTTON_SIZE}
-            rx={BUTTON_SIZE / 2}
-            fill="url(#grad)"
-          />
-        </Svg>
-
-        {/* Icon overlay */}
-        <View style={styles.iconWrapper}>
-          <Icons.Lock size={32} color="white" weight="bold" />
-        </View>
+   <View style={styles.container}>
+    <View style={styles.topContainer}>
+      <Animated.FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <View style={[styles.page, { width }]}>
+            <View style={styles.columnContainer}>
+              {/* Component centered at top */}
+              <View style={styles.topButtonContainer}>{item.component}</View>              
+            </View>
+          </View>
+        )}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+      />
+      <View style={styles.paginationWrapper}>
+        <Pagination length={data.length} x={x} />
       </View>
-    </Pressable>
+    </View>
+   </View>
   );
 };
 
 const styles = StyleSheet.create({
-  buttonWrapper: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#d7d7d7ba',
+  },
+  page: {
+    flex: 1,
+    justifyContent: 'flex-start', // top-aligned
     alignItems: 'center',
   },
-  buttonContainer: {
-    width: BUTTON_SIZE,
-    height: BUTTON_SIZE,
-    justifyContent: 'center',
+  topContainer: {
+    backgroundColor: '#fff', // top color
     alignItems: 'center',
+    borderBottomLeftRadius: 30,  // rounded edges at bottom
+    borderBottomRightRadius: 30,
+    overflow: 'hidden', 
+    marginBottom: 150
   },
-  dot: {
-    width: BUTTON_SIZE,
-    height: BUTTON_SIZE,
-    borderRadius: BUTTON_SIZE / 2,
-    backgroundColor: '#6baccd',
-  },
-  iconWrapper: {
-    position: 'absolute',
-    justifyContent: 'center',
+  columnContainer: {
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    marginTop: 240, // spacing from top of the screen
   },
+  topButtonContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 150, // spacing between component and pagination
+  },
+  paginationWrapper: {
+    // position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    // bottom: 450
+  }
 });
 
-export default GradientButton;
+export default Index;
