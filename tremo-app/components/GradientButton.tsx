@@ -57,7 +57,7 @@ const GradientButton: React.FC = () => {
 
             {/* Icon overlay */}
             <View style={styles.iconWrapper}>
-                <Icons.LockIcon size={32} color="white" weight="bold" />
+                <Icons.PowerIcon size={34} color="white" weight="bold" />
             </View>
             </View>
         </View>

@@ -8,6 +8,7 @@ export const colors = {
   // textLight: "#0ea5e9",
   // textLighter: "#bae4fd",
   text: "#000",
+  textDark: "#222",
   textLight: "#737373",
   textLighter: "#a3a3a3",
   white: "#fff",

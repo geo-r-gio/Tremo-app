@@ -65,7 +65,7 @@ const CustomButton = ({dataLength, flatlistIndex, flatlistRef, x}: Props) => {
                 } else {
                     //console.log('NAVIGATE TO NEXT SCREEN')
                     //router.push("/signin")
-                    router.push("/home");
+                    router.push("/(tabs)/home");
                 }
             }}
         >
