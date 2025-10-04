@@ -1,15 +1,76 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import GradientButton from '../../components/GradientButton';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, Switch } from "react-native";
+import GradientButton from "../../components/GradientButton";
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "@/constants/theme";
 
 const HomeScreen = () => {
+  const [sessionActive, setSessionActive] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [battery, setBattery] = useState(100);
+  const [bluetoothConnected, setBluetoothConnected] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    if (sessionActive) {
+      timer = setInterval(() => {
+        setDuration((prev) => prev + 1);
+        setBattery((prev) => (prev > 0 ? prev - 0.1 : 0));
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [sessionActive]);
+
+  const handleButtonPress = () => {
+    setSessionActive((prev) => !prev);
+    if (!sessionActive) setDuration(0);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-        {/* Component centered at top */}
-        <View style={styles.topButtonContainer}>
-          <GradientButton />
+      <Text style={styles.header}>Automatic Stabilization</Text>
+
+      {/* Circular Gradient Button */}
+      <View style={styles.circleContainer}>
+        <GradientButton onToggle={handleButtonPress} />
+      </View>
+
+      {/* Cards */}
+      <View style={styles.cardsContainer}>
+        <View style={styles.card}>
+          <Ionicons name="timer-outline" size={24} color="#000" />
+          <Text style={styles.cardTitle}>Duration</Text>
+          <Text style={styles.cardValue}>{formatTime(duration)}</Text>
         </View>
+
+        <View style={styles.card}>
+          <Ionicons name="battery-half-outline" size={24} color="#000" />
+          <Text style={styles.cardTitle}>Battery</Text>
+          <Text style={styles.cardValue}>{battery.toFixed(0)}%</Text>
+        </View>
+      </View>
+
+      {/* Bluetooth Switch */}
+      <View style={styles.bluetoothContainer}>
+        <Text style={styles.bluetoothLabel}>Connect to Bluetooth</Text>
+        <Switch
+          value={bluetoothConnected}
+          onValueChange={setBluetoothConnected}
+          trackColor={{ false: "#ccc", true: "#34C759" }}
+          thumbColor="#fff"
+        />
       </View>
     </View>
   );
@@ -18,22 +79,429 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d7d7d7ba',
+    backgroundColor: "#F8F9FB",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    paddingVertical: 40,
   },
-  topContainer: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    borderBottomLeftRadius: 30,  
-    borderBottomRightRadius: 30,
-    overflow: 'hidden', 
-    marginBottom: 150,
+  header: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#1A1A1A",
   },
-  topButtonContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 240, // spacing from top
-    marginBottom: 150,
+  circleContainer: {
+    width: 230,
+    height: 230,
+    borderRadius: 115,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  centerTextContainer: {
+    position: "absolute",
+    alignItems: "center",
+  },
+  timerText: {
+    fontSize: 36,
+    fontWeight: "700",
+    color: "#fff",
+    marginTop: 4,
+  },
+  subText: {
+    fontSize: 14,
+    color: "#fff",
+    marginTop: 2,
+  },
+  cardsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+    marginBottom: -50,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  cardTitle: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 6,
+  },
+  cardValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+    marginTop: 4,
+  },
+  bluetoothContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "75%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  bluetoothLabel: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#000",
   },
 });
 
 export default HomeScreen;
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { StyleSheet, View, Text, ScrollView } from "react-native";
+// import GradientButton from "../../components/GradientButton";
+// import { colors } from "@/constants/theme";
+// import { Ionicons } from "@expo/vector-icons";
+
+// const HomeScreen = () => {
+//   const [sessionActive, setSessionActive] = useState(false);
+//   const [duration, setDuration] = useState(0); // in seconds
+//   const [battery, setBattery] = useState(100); // mock battery percentage
+
+//   useEffect(() => {
+//     let timer: ReturnType<typeof setInterval> | undefined;
+
+//     if (sessionActive) {
+//       timer = setInterval(() => {
+//         setDuration((prev) => prev + 1);
+//         setBattery((prev) => (prev > 0 ? prev - 0.1 : 0));
+//       }, 1000);
+//     }
+
+//     return () => {
+//       if (timer) clearInterval(timer);
+//     };
+//   }, [sessionActive]);
+
+//   const handleButtonPress = () => {
+//     setSessionActive((prev) => !prev);
+//     if (!sessionActive) setDuration(0);
+//   };
+
+//   const formatTime = (seconds: number) => {
+//     const mins = Math.floor(seconds / 60);
+//     const secs = seconds % 60;
+//     return `${mins.toString().padStart(2, "0")}:${secs
+//       .toString()
+//       .padStart(2, "0")}`;
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       {/* Top Container */}
+//       <View style={styles.topContainer}>
+//         <Text style={styles.title}>Automatic Vibration Adjustments</Text>
+
+//         <View style={styles.topButtonContainer}>
+//           <GradientButton onToggle={handleButtonPress} />
+//         </View>
+//       </View>
+
+//       {/* Bottom Cards */}
+//       <ScrollView
+//         contentContainerStyle={styles.bottomContainer}
+//         showsVerticalScrollIndicator={false}
+//       >
+//         {/* Session Duration Card */}
+//         <View style={[styles.card, { backgroundColor: colors.peach }]}>
+//           <View style={styles.cardContent}>
+//             <Ionicons name="time-outline" size={32} color={colors.white} />
+//             <Text style={styles.cardTitle}>Session Duration</Text>
+//           </View>
+//           <Text style={styles.cardValue}>{formatTime(duration)}</Text>
+//         </View>
+
+//         {/* Battery Life Card */}
+//         <View style={[styles.card, { backgroundColor: colors.mint }]}>
+//           <View style={styles.cardContent}>
+//             <Ionicons name="battery-half-outline" size={32} color={colors.white} />
+//             <Text style={styles.cardTitle}>Battery Life</Text>
+//           </View>
+//           <Text style={styles.cardValue}>{battery.toFixed(0)}%</Text>
+//         </View>
+//       </ScrollView>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#d7d7d7ba",
+//   },
+//   topContainer: {
+//     backgroundColor: "#fff",
+//     alignItems: "center",
+//     borderBottomLeftRadius: 30,
+//     borderBottomRightRadius: 30,
+//     overflow: "hidden",
+//     borderWidth: 1.5
+//   },
+//   title: {
+//     fontSize: 22,
+//     fontWeight: "bold",
+//     marginTop: 85,
+//     color: colors.textDark,
+//   },
+//   topButtonContainer: {
+//     width: "100%",
+//     alignItems: "center",
+//     marginTop: 80,
+//     marginBottom: 80,
+//   },
+//   bottomContainer: {
+//     flexGrow: 1,
+//     alignItems: "center",
+//     justifyContent: "flex-start",
+//     paddingTop: 40,
+//     gap: 20,
+//     paddingBottom: 40,
+//   },
+//   card: {
+//     width: "88%",
+//     height: "25%",
+//     borderRadius: 18,
+//     paddingVertical: 20,
+//     paddingHorizontal: 24,
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     // Shadows
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.2,
+//     shadowRadius: 6,
+//     elevation: 4,
+//     borderWidth: 1.5,
+//   },
+//   cardContent: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     gap: 12,
+//   },
+//   cardTitle: {
+//     fontSize: 17,
+//     fontWeight: "600",
+//     color: colors.white,
+//   },
+//   cardValue: {
+//     fontSize: 22,
+//     fontWeight: "bold",
+//     color: colors.white,
+//   },
+// });
+
+// export default HomeScreen;
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { StyleSheet, View, Text, ScrollView } from 'react-native';
+// import GradientButton from '../../components/GradientButton';
+// import { colors } from '@/constants/theme';
+
+// const HomeScreen = () => {
+//   const [sessionActive, setSessionActive] = useState(false);
+//   const [duration, setDuration] = useState(0); // in seconds
+//   const [battery, setBattery] = useState(100); // just a mock battery percentage
+
+//   // Timer for session duration
+//   useEffect(() => {
+//     let timer: number | undefined;
+
+//     if (sessionActive) {
+//         timer = setInterval(() => {
+//         setDuration(prev => prev + 1);
+//         setBattery(prev => (prev > 0 ? prev - 0.1 : 0));
+//         }, 1000);
+//     }
+
+//     return () => {
+//         if (timer !== undefined) {
+//         clearInterval(timer);
+//         }
+//     };
+//   }, [sessionActive]);
+
+//   const handleButtonPress = () => {
+//     setSessionActive(prev => !prev);
+//     if (!sessionActive) setDuration(0); // reset duration on start if desired
+//   };
+
+//   const formatTime = (seconds: number) => {
+//     const mins = Math.floor(seconds / 60);
+//     const secs = seconds % 60;
+//     return `${mins.toString().padStart(2, '0')}:${secs
+//       .toString()
+//       .padStart(2, '0')}`;
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       {/* Top Container */}
+//       <View style={styles.topContainer}>
+//         <Text style={styles.title}>Automatic Vibration Adjustments</Text>
+
+//         <View style={styles.topButtonContainer}>
+//           <GradientButton onToggle={handleButtonPress} />
+//         </View>
+//       </View>
+
+//       {/* Bottom Cards */}
+//       <ScrollView 
+//         contentContainerStyle={styles.bottomContainer} 
+//         showsVerticalScrollIndicator={false}
+//       >
+//         {/* <View style={styles.bottomContainer}> */}
+//             <View style={styles.card}>
+//                 <Text style={styles.cardTitle}>Session Duration</Text>
+//                 <Text style={styles.cardValue}>{formatTime(duration)}</Text>
+//             </View>
+
+//             <View style={styles.card}>
+//                 <Text style={styles.cardTitle}>Battery Life</Text>
+//                 <Text style={styles.cardValue}>{battery.toFixed(0)}%</Text>
+//             </View>
+//         {/* </View> */}
+
+//       </ScrollView>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#d7d7d7ba',
+//   },
+//   topContainer: {
+//     backgroundColor: '#fff',
+//     alignItems: 'center',
+//     borderBottomLeftRadius: 30,
+//     borderBottomRightRadius: 30,
+//     overflow: 'hidden',
+//     // paddingBottom: 40,
+//   },
+//   title: {
+//     fontSize: 22,
+//     fontWeight: 'bold',
+//     marginTop: 85,
+//     color: colors.textDark,
+//   },
+//   topButtonContainer: {
+//     width: '100%',
+//     alignItems: 'center',
+//     marginTop: 80,
+//     marginBottom: 80,
+//   },
+//   bottomContainer: {
+//     flexGrow: 1,
+//     alignItems: 'center',
+//     justifyContent: 'flex-start',
+//     paddingTop: 40,
+//     gap: 20,
+//     paddingBottom: 40
+//   },
+//   card: {
+//     width: '85%',
+//     backgroundColor: '#fff',
+//     borderRadius: 20,
+//     padding: 20,
+//     alignItems: 'center',
+//     // shadow for iOS
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 5 },
+//     shadowOpacity: 0.15,
+//     shadowRadius: 10,
+//     // elevation for Android
+//     elevation: 5,
+//   },
+//   cardTitle: {
+//     fontSize: 16,
+//     fontWeight: '600',
+//     color: colors.textDark,
+//     marginBottom: 10,
+//   },
+//   cardValue: {
+//     fontSize: 22,
+//     fontWeight: 'bold',
+//     color: colors.primary,
+//   },
+// });
+
+// export default HomeScreen;
+
+
+
+
+
+// // import React from 'react';
+// // import { StyleSheet, View, Text } from 'react-native';
+// // import GradientButton from '../../components/GradientButton';
+// // import { colors } from '@/constants/theme';
+
+// // const HomeScreen = () => {
+// //   return (
+// //     <View style={styles.container}>
+// //       <View style={styles.topContainer}>
+// //         <Text style={styles.title}>Automatic Vibration Adjustments</Text>
+
+// //         <View style={styles.topButtonContainer}>
+// //           <GradientButton />
+// //         </View>
+// //       </View>
+// //     </View>
+// //   );
+// // };
+
+// // const styles = StyleSheet.create({
+// //   container: {
+// //     flex: 1,
+// //     backgroundColor: '#d7d7d7ba',
+// //   },
+// //   topContainer: {
+// //     backgroundColor: '#fff',
+// //     alignItems: 'center',
+// //     borderBottomLeftRadius: 30,  
+// //     borderBottomRightRadius: 30,
+// //     overflow: 'hidden', 
+// //     // marginBottom: 150,
+// //   },
+// //   title: {
+// //     fontSize: 22,
+// //     fontWeight: 'bold',
+// //     marginTop: 85,
+// //     color: colors.textDark
+// //   },
+// //   topButtonContainer: {
+// //     width: '100%',
+// //     alignItems: 'center',
+// //     marginTop: 150, // spacing from top
+// //     marginBottom: 160,
+// //   }
+// // });
+
+// // export default HomeScreen;
