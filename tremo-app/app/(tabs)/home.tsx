@@ -42,10 +42,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Automatic Stabilization</Text>
 
-      {/* Circular Gradient Button */}
-      <View style={styles.circleContainer}>
-        <GradientButton onToggle={handleButtonPress} />
-      </View>
+      <GradientButton onToggle={handleButtonPress} />
 
       {/* Cards */}
       <View style={styles.cardsContainer}>
@@ -82,20 +79,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FB",
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingVertical: 40,
+    paddingVertical: 40
   },
   header: {
     fontSize: 20,
     fontWeight: "600",
     color: "#1A1A1A",
-  },
-  circleContainer: {
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
+    marginTop: -60
   },
   centerTextContainer: {
     position: "absolute",
