@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Switch } from "react-native";
+import { StyleSheet, View, Text, Switch, Alert } from "react-native";
 import GradientButton from "../../components/GradientButton";
+import { bleManager } from "@/constants/bleManager";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/theme";
+
+const ARDUINO_NAME = "Nano33BLE";
 
 const HomeScreen = () => {
   const [sessionActive, setSessionActive] = useState(false);
   const [duration, setDuration] = useState(0);
   const [battery, setBattery] = useState(100);
   const [bluetoothConnected, setBluetoothConnected] = useState(false);
+  const [device, setDevice] = useState<any>(null);
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -36,6 +40,42 @@ const HomeScreen = () => {
     return `${mins.toString().padStart(2, "0")}:${secs
       .toString()
       .padStart(2, "0")}`;
+  };
+
+  const handleBluetoothToggle = async (value: boolean) => {
+    setBluetoothConnected(value);
+
+    if (value) {
+      try{
+        console.log("Scanning for Arduino...");
+        bleManager.startDeviceScan(null, null, async (error, scannedDevice) => {
+          if (error) {
+            console.error(error);
+            return;
+          }
+
+          if (scannedDevice?.name === ARDUINO_NAME) {
+            console.log("Arduino found!");
+            bleManager.stopDeviceScan();
+
+            const connectedDevice = await scannedDevice.connect();
+            setDevice(connectedDevice);
+            Alert.alert("Connected", "Successfully connected to Arduino Nano 33 BLE Sense Rev2!");
+          }
+        });
+
+        // Stop scanning after 10s
+        setTimeout(() => bleManager.stopDeviceScan(), 10000);
+      } catch(err){
+        console.error("Connection error: ", err);
+      }
+    } else {
+      if (device) {
+        await device.cancelConnection();
+        setDevice(null);
+        Alert.alert("Disconnected", "Bluetooth disconnected from Arduino.");
+      }
+    }
   };
 
   return (
@@ -67,7 +107,7 @@ const HomeScreen = () => {
         <Text style={styles.bluetoothLabel}>Connect to Bluetooth</Text>
         <Switch
           value={bluetoothConnected}
-          onValueChange={setBluetoothConnected}
+          onValueChange={handleBluetoothToggle}
           trackColor={{ false: "#ccc", true: "#34C759" }}
           thumbColor="#fff"
         />
