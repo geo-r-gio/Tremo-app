@@ -1,0 +1,8 @@
+{
+  "android": {
+    "package": "com.anonymous.tremoapp"
+  },
+  "ios": {
+    "bundleIdentifier": "com.anonymous.tremoapp"
+  }
+}
