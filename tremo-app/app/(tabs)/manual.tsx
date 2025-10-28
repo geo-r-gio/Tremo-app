@@ -21,6 +21,7 @@ const ManualScreen = () => {
   return (
     <View style={styles.container}>
       {/* Top circular component */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 140 }}>
       <View style={styles.topContainer}>
         <Text style={styles.header}>Customize Vibration</Text>
         <View style={styles.topButtonContainer}>
@@ -30,7 +31,7 @@ const ManualScreen = () => {
 
       {/* Pattern selection */}
       <View style={styles.patternContainer}>
-         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 140 }}>
+         {/* <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 140 }}> */}
           <Text style={styles.sectionTitle}>Vibration Patterns</Text>
           <View style={styles.grid}>
             {vibrationPatterns.map(pattern => {
@@ -105,8 +106,9 @@ const ManualScreen = () => {
               <Text style={styles.applyText}>Apply Settings</Text>
             </TouchableOpacity>
           </LinearGradient>
-        </ScrollView>
+        {/* </ScrollView> */}
       </View>
+      </ScrollView>
     </View>
   );
 };
@@ -127,8 +129,8 @@ const styles = StyleSheet.create({
   topButtonContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 140,
-    marginBottom: 150
+    marginTop: 50,
+    marginBottom: 50
   },
   header: {
     fontSize: 20,
