@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Switch, Alert } from "react-native";
 import GradientButton from "../../components/GradientButton";
 import { bleManager } from "@/constants/bleManager";
+import base64 from 'react-native-base64';
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/theme";
 
-const ARDUINO_NAME = "Nano33BLE";
+const ARDUINO_NAME = "Arduino";
 
 const HomeScreen = () => {
   const [sessionActive, setSessionActive] = useState(false);
@@ -29,9 +30,37 @@ const HomeScreen = () => {
     };
   }, [sessionActive]);
 
-  const handleButtonPress = () => {
-    setSessionActive((prev) => !prev);
+  // const handleButtonPress = () => {
+  //   setSessionActive((prev) => !prev);
+  //   if (!sessionActive) setDuration(0);
+  // };
+
+  const handleButtonPress = async () => {
+    setSessionActive(prev => !prev);
     if (!sessionActive) setDuration(0);
+
+    if (!device) return;
+
+    const msg = sessionActive ? "Button connection lost" : "Button connection secured";
+    const base64Value = base64.encode(msg);
+
+    try {
+      // Wait a short moment to ensure services are ready
+      await device.discoverAllServicesAndCharacteristics();
+      await new Promise(res => setTimeout(res, 500));
+
+      // Directly write to known service/characteristic
+      await device.writeCharacteristicWithResponseForService(
+        "12345678-1234-1234-1234-1234567890ab",
+        "87654321-4321-4321-4321-abcdefabcdef",
+        base64Value
+      );
+
+      console.log("Message sent to Arduino:", msg);
+
+    } catch (err) {
+      console.error("Failed to send message to Arduino:", err);
+    }
   };
 
   const formatTime = (seconds: number) => {

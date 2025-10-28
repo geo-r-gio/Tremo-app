@@ -7,27 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0FE6283AA99F5C4F87D18B37 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD823ADB96F01075A2E12D6 /* ExpoModulesProvider.swift */; };
-		1148827D3748F70A794A7B92 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5007AA4C8334AD62C87F49B7 /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		9F723CEC22D3D0F55109AA99 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E4FB0A4129D2082F5217D7 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		BD627FA75001487D9EF80835 /* libPods-tremoapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CB9E35A1B5BF4C5F69BB80 /* libPods-tremoapp.a */; };
+		E9BD139F9337796B2FAB73C1 /* libPods-tremoapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 511DA49ACB515A7D1331A5BE /* libPods-tremoapp.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		FF2CAB74D714D59B29EDCBCB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 02C1C1A0CA5DD6B2DD7C93A6 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		03CB9E35A1B5BF4C5F69BB80 /* libPods-tremoapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tremoapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02C1C1A0CA5DD6B2DD7C93A6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = tremoapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* tremoapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tremoapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = tremoapp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tremoapp/Info.plist; sourceTree = "<group>"; };
-		3ED127B42FBFD87794FE5810 /* Pods-tremoapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tremoapp.release.xcconfig"; path = "Target Support Files/Pods-tremoapp/Pods-tremoapp.release.xcconfig"; sourceTree = "<group>"; };
-		5007AA4C8334AD62C87F49B7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = tremoapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		961CF66F4E6720CA88839667 /* Pods-tremoapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tremoapp.debug.xcconfig"; path = "Target Support Files/Pods-tremoapp/Pods-tremoapp.debug.xcconfig"; sourceTree = "<group>"; };
+		416285F62DCCB3E8A32DF3DF /* Pods-tremoapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tremoapp.release.xcconfig"; path = "Target Support Files/Pods-tremoapp/Pods-tremoapp.release.xcconfig"; sourceTree = "<group>"; };
+		511DA49ACB515A7D1331A5BE /* libPods-tremoapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tremoapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6672FDA817B600F6A099E51B /* Pods-tremoapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tremoapp.debug.xcconfig"; path = "Target Support Files/Pods-tremoapp/Pods-tremoapp.debug.xcconfig"; sourceTree = "<group>"; };
+		A1E4FB0A4129D2082F5217D7 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-tremoapp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = tremoapp/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EFD823ADB96F01075A2E12D6 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-tremoapp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = tremoapp/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* tremoapp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "tremoapp-Bridging-Header.h"; path = "tremoapp/tremoapp-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD627FA75001487D9EF80835 /* libPods-tremoapp.a in Frameworks */,
+				E9BD139F9337796B2FAB73C1 /* libPods-tremoapp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				5007AA4C8334AD62C87F49B7 /* PrivacyInfo.xcprivacy */,
+				02C1C1A0CA5DD6B2DD7C93A6 /* PrivacyInfo.xcprivacy */,
 			);
 			name = tremoapp;
 			sourceTree = "<group>";
@@ -62,15 +62,15 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				03CB9E35A1B5BF4C5F69BB80 /* libPods-tremoapp.a */,
+				511DA49ACB515A7D1331A5BE /* libPods-tremoapp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5F8B8E40DD57A8C46B7FECD1 /* ExpoModulesProviders */ = {
+		66197C0261F079009B7672F7 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				BD2D2C0C9440F39AEAF2AFAC /* tremoapp */,
+				D6E96AA2461650003F217275 /* tremoapp */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -89,8 +89,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				5F8B8E40DD57A8C46B7FECD1 /* ExpoModulesProviders */,
-				F70DAA2B948271F19302C206 /* Pods */,
+				B304E47FE8FE6553824F9810 /* Pods */,
+				66197C0261F079009B7672F7 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,6 +105,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B304E47FE8FE6553824F9810 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6672FDA817B600F6A099E51B /* Pods-tremoapp.debug.xcconfig */,
+				416285F62DCCB3E8A32DF3DF /* Pods-tremoapp.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,22 +124,12 @@
 			path = tremoapp/Supporting;
 			sourceTree = "<group>";
 		};
-		BD2D2C0C9440F39AEAF2AFAC /* tremoapp */ = {
+		D6E96AA2461650003F217275 /* tremoapp */ = {
 			isa = PBXGroup;
 			children = (
-				EFD823ADB96F01075A2E12D6 /* ExpoModulesProvider.swift */,
+				A1E4FB0A4129D2082F5217D7 /* ExpoModulesProvider.swift */,
 			);
 			name = tremoapp;
-			sourceTree = "<group>";
-		};
-		F70DAA2B948271F19302C206 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				961CF66F4E6720CA88839667 /* Pods-tremoapp.debug.xcconfig */,
-				3ED127B42FBFD87794FE5810 /* Pods-tremoapp.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,14 +139,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "tremoapp" */;
 			buildPhases = (
-				437F574DFA5FC9EA9B62767E /* [CP] Check Pods Manifest.lock */,
-				CFB348C0A62F3768C118ADD2 /* [Expo] Configure project */,
+				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
+				B0AF4B857B2C38E836EC3B20 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				B2CB5C0DD261A53E78565DAD /* [CP] Embed Pods Frameworks */,
-				8C8E1040D892CCA87A53A710 /* [CP] Copy Pods Resources */,
+				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
+				119E0555539636FF16D65C1F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -167,6 +167,8 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "DTWX3SG739";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -196,7 +198,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				1148827D3748F70A794A7B92 /* PrivacyInfo.xcprivacy in Resources */,
+				FF2CAB74D714D59B29EDCBCB /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,7 +220,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
 		};
-		437F574DFA5FC9EA9B62767E /* [CP] Check Pods Manifest.lock */ = {
+		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -240,7 +242,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8C8E1040D892CCA87A53A710 /* [CP] Copy Pods Resources */ = {
+		119E0555539636FF16D65C1F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-tremoapp/Pods-tremoapp-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-tremoapp/Pods-tremoapp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -290,25 +310,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-tremoapp/Pods-tremoapp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B2CB5C0DD261A53E78565DAD /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-tremoapp/Pods-tremoapp-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-tremoapp/Pods-tremoapp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CFB348C0A62F3768C118ADD2 /* [Expo] Configure project */ = {
+		B0AF4B857B2C38E836EC3B20 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -335,7 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				0FE6283AA99F5C4F87D18B37 /* ExpoModulesProvider.swift in Sources */,
+				9F723CEC22D3D0F55109AA99 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +346,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 961CF66F4E6720CA88839667 /* Pods-tremoapp.debug.xcconfig */;
+			baseConfigurationReference = 6672FDA817B600F6A099E51B /* Pods-tremoapp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -375,12 +377,15 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "DTWX3SG739";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3ED127B42FBFD87794FE5810 /* Pods-tremoapp.release.xcconfig */;
+			baseConfigurationReference = 416285F62DCCB3E8A32DF3DF /* Pods-tremoapp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -405,6 +410,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "DTWX3SG739";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};
