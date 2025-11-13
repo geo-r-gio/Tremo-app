@@ -8,6 +8,7 @@ import Input from '@/components/Input'
 import * as Icons from 'phosphor-react-native'
 import Button from '@/components/Button'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@/context/authContext'
 
 const Signin = () => {
 
@@ -15,6 +16,7 @@ const Signin = () => {
     const passwordRef = useRef("");
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const {signin} = useAuth();
 
     const handleSubmit = async () => {
         if(!emailRef.current || !passwordRef.current){
@@ -27,6 +29,20 @@ const Signin = () => {
             Alert.alert('Sign In', 'Please enter a valid email');
             return;
         }
+
+        setIsLoading(true);
+
+        let response = await signin(emailRef.current, passwordRef.current);
+        setIsLoading(false);
+
+        console.log('got result: ', response);
+
+        if(!response.success){
+            Alert.alert('Sign In', response.msg);
+            return;
+        }
+
+        router.replace('../home');
 
         console.log('email: ', emailRef.current);
         console.log('password: ', passwordRef.current);
