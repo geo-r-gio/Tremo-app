@@ -12,11 +12,15 @@ const vibrationPatterns = [
 ];
 
 const ManualScreen = () => {
-  const [selectedPattern, setSelectedPattern] = useState<number>(1);
+  const [selectedPattern, setSelectedPattern] = useState<number | null>(null);
   const [intensity, setIntensity] = useState(3);
 
   const handleIncrease = () => setIntensity(prev => (prev < 5 ? prev + 1 : prev));
   const handleDecrease = () => setIntensity(prev => (prev > 1 ? prev - 1 : prev));
+
+  const togglePattern = (id: number) => {
+    setSelectedPattern(prev => (prev === id ? null : id));
+  };
 
   return (
     <View style={styles.container}>
@@ -36,31 +40,32 @@ const ManualScreen = () => {
           <View style={styles.grid}>
             {vibrationPatterns.map(pattern => {
               const IconComponent = (Icons as any)[pattern.icon];
+              const isSelected = selectedPattern === pattern.id;
               return (
                 <TouchableOpacity
                   key={pattern.id}
                   style={[
                     styles.card,
-                    selectedPattern === pattern.id && styles.selectedCard,
+                    isSelected && styles.selectedCard,
                   ]}
-                  onPress={() => setSelectedPattern(pattern.id)}
+                  onPress={() => togglePattern(pattern.id)}
                   activeOpacity={0.9}
                 >
                   <View
                     style={[
                       styles.iconCircle,
-                      selectedPattern === pattern.id && styles.selectedIconCircle,
+                      isSelected && styles.selectedIconCircle,
                     ]}
                   >
                     <IconComponent
                       size={26}
-                      color={selectedPattern === pattern.id ? "#0c5197" : "#555"}
+                      color={isSelected ? "#0c5197" : "#555"}
                     />
                   </View>
                   <Text
                     style={[
                       styles.cardTitle,
-                      selectedPattern === pattern.id && { color: "#111" },
+                      isSelected && { color: "#111" },
                     ]}
                   >
                     {pattern.title}
