@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from "../firebaseConfig";
 
@@ -25,16 +25,20 @@ export const AuthContextProvider = ({children}) => {
 
     const signin = async (email, password)=>{
         try {
+            const response = await signInWithEmailAndPassword(auth, email, password);
+            return {success: true, data: response?.user};
             
         } catch (e) {
-            
+            return {success:false, msg: e.message};
         }
     }
 
     const signout = async ()=>{
         try {
-            
+            await signOut(auth);
+            return {success: true};
         } catch (e) {
+            return {success:false, msg:e.message};
             
         }
     }
