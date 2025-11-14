@@ -35,29 +35,53 @@ const HomeScreen = () => {
   //   if (!sessionActive) setDuration(0);
   // };
 
+  // const handleButtonPress = async () => {
+  //   setSessionActive(prev => !prev);
+  //   if (!sessionActive) setDuration(0);
+
+  //   if (!device) return;
+
+  //   const msg = sessionActive ? "Button connection lost" : "Button connection secured";
+  //   const base64Value = base64.encode(msg);
+
+  //   try {
+  //     // Wait a short moment to ensure services are ready
+  //     await device.discoverAllServicesAndCharacteristics();
+  //     await new Promise(res => setTimeout(res, 500));
+
+  //     // Directly write to known service/characteristic
+  //     await device.writeCharacteristicWithResponseForService(
+  //       "12345678-1234-1234-1234-1234567890ab",
+  //       "87654321-4321-4321-4321-abcdefabcdef",
+  //       base64Value
+  //     );
+
+  //     console.log("Message sent to Arduino:", msg);
+
+  //   } catch (err) {
+  //     console.error("Failed to send message to Arduino:", err);
+  //   }
+  // };
+
   const handleButtonPress = async () => {
     setSessionActive(prev => !prev);
-    if (!sessionActive) setDuration(0);
 
     if (!device) return;
 
-    const msg = sessionActive ? "Button connection lost" : "Button connection secured";
+    const msg = sessionActive ? "STOP" : "START"; // Toggle start/stop ML
     const base64Value = base64.encode(msg);
 
     try {
-      // Wait a short moment to ensure services are ready
       await device.discoverAllServicesAndCharacteristics();
-      await new Promise(res => setTimeout(res, 500));
+      await new Promise(res => setTimeout(res, 300));
 
-      // Directly write to known service/characteristic
       await device.writeCharacteristicWithResponseForService(
         "12345678-1234-1234-1234-1234567890ab",
         "87654321-4321-4321-4321-abcdefabcdef",
         base64Value
       );
 
-      console.log("Message sent to Arduino:", msg);
-
+      console.log("Sent to Arduino:", msg);
     } catch (err) {
       console.error("Failed to send message to Arduino:", err);
     }
