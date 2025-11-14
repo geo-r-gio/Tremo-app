@@ -64,7 +64,17 @@ const HomeScreen = () => {
   // };
 
   const handleButtonPress = async () => {
-    setSessionActive(prev => !prev);
+    // setSessionActive(prev => !prev);
+    setSessionActive(prev => {
+      const newState = !prev;
+
+      // When turning ON → reset duration
+      if (newState) {
+        setDuration(0);
+      }
+
+      return newState;
+    });
 
     if (!device) return;
 
