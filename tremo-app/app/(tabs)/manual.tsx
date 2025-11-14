@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-nati
 import * as Icons from "phosphor-react-native";
 import RadialVariant from "../../components/RadialVariant";
 import { LinearGradient } from "expo-linear-gradient";
+import base64 from 'react-native-base64';
+import { useBLE } from "@/context/BLEContext";
 
 const vibrationPatterns = [
   { id: 1, icon: "Waves", title: "Gentle Wave", desc: "Smooth, continuous" },
@@ -12,14 +14,86 @@ const vibrationPatterns = [
 ];
 
 const ManualScreen = () => {
+  const [radialIntensity, setRadialIntensity] = useState(0);
   const [selectedPattern, setSelectedPattern] = useState<number | null>(null);
   const [intensity, setIntensity] = useState(3);
+  // const [device, setDevice] = useState<any>(null);
+  const { device } = useBLE();
 
   const handleIncrease = () => setIntensity(prev => (prev < 5 ? prev + 1 : prev));
   const handleDecrease = () => setIntensity(prev => (prev > 1 ? prev - 1 : prev));
 
+  const sendBLEMessage = async (message: any) => {
+    if (!device) {
+      console.log("No BLE device connected");
+      return;
+    }
+
+    try {
+      // Make sure services are discovered
+      await device.discoverAllServicesAndCharacteristics();
+      await new Promise(res => setTimeout(res, 200)); // tiny delay
+
+      const json = JSON.stringify(message);
+      const base64Value = base64.encode(json);
+
+      await device.writeCharacteristicWithResponseForService(
+        "12345678-1234-1234-1234-1234567890ab",
+        "87654321-4321-4321-4321-abcdefabcdef",
+        base64Value
+      );
+
+      console.log("Sent:", json);
+    } catch (err: any) {
+      console.log("BLE write error:", err, err.reason);
+    }
+  };
+
+
+// const sendBLEMessage = async (message: any) => {
+//     if (!device) return;
+
+//     const json = JSON.stringify(message);
+//     // const encoded = base64.encode(json);
+
+//     try {
+//       await device.writeCharacteristicWithResponseForService(
+//         "12345678-1234-1234-1234-1234567890ab",
+//         "87654321-4321-4321-4321-abcdefabcdef",
+//         // 
+//         json
+//       );
+
+//       console.log("Sent:", json);
+//     } catch (err) {
+//       console.log("BLE write error:", err);
+//     }
+//   };
+
   const togglePattern = (id: number) => {
     setSelectedPattern(prev => (prev === id ? null : id));
+  };
+
+  const handleApplySettings = async () => {
+    // Stop ML if active
+    await sendBLEMessage({ mode: "ml", state: "stop" });
+
+    if (selectedPattern === null) {
+      // Manual slider mode
+      await sendBLEMessage({
+        mode: "manual",
+        intensity: radialIntensity // value from radial slider
+      });
+    } else {
+      // Pattern mode
+      await sendBLEMessage({
+        mode: "pattern",
+        pattern: selectedPattern,
+        level: intensity
+      });
+    }
+
+    console.log("Settings applied");
   };
 
   return (
@@ -29,7 +103,11 @@ const ManualScreen = () => {
       <View style={styles.topContainer}>
         <Text style={styles.header}>Customize Vibration</Text>
         <View style={styles.topButtonContainer}>
-          <RadialVariant />
+          {/* <RadialVariant /> */}
+          <RadialVariant 
+            value={radialIntensity}
+            onValueChange={setRadialIntensity}
+          />
         </View>
       </View>
 
@@ -107,7 +185,7 @@ const ManualScreen = () => {
             start={[0, 0]}
             end={[1, 1]}
           >
-            <TouchableOpacity activeOpacity={0.8}>
+            <TouchableOpacity activeOpacity={0.8} onPress={handleApplySettings}>
               <Text style={styles.applyText}>Apply Settings</Text>
             </TouchableOpacity>
           </LinearGradient>

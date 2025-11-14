@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Switch, Alert } from "react-native";
 import GradientButton from "../../components/GradientButton";
 import { bleManager } from "@/constants/bleManager";
+import { useBLE } from "@/context/BLEContext";
 import base64 from 'react-native-base64';
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/theme";
@@ -13,7 +14,9 @@ const HomeScreen = () => {
   const [duration, setDuration] = useState(0);
   const [battery, setBattery] = useState(100);
   const [bluetoothConnected, setBluetoothConnected] = useState(false);
-  const [device, setDevice] = useState<any>(null);
+  // const [device, setDevice] = useState<any>(null);
+
+  const { device, setDevice, bleManager, connected, setConnected } = useBLE();
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -105,47 +108,131 @@ const HomeScreen = () => {
       .padStart(2, "0")}`;
   };
 
+
   const handleBluetoothToggle = async (value: boolean) => {
+    setConnected(value);
     setBluetoothConnected(value);
 
     if (value) {
-      try{
-        console.log("Scanning for Arduino...");
-        bleManager.startDeviceScan(null, null, async (error, scannedDevice) => {
-          if (error) {
-            console.error(error);
-            return;
-          }
+      console.log("Scanning for Arduino...");
+      bleManager.startDeviceScan(null, null, async (error, scannedDevice) => {
+        if (error) return console.error(error);
 
-          if (scannedDevice?.name === ARDUINO_NAME) {
-            console.log("Arduino found!");
-            bleManager.stopDeviceScan();
+        if (scannedDevice?.name === ARDUINO_NAME) {
+          console.log("Arduino found!");
+          bleManager.stopDeviceScan();
+          const connectedDevice = await scannedDevice.connect();
+          setDevice(connectedDevice);
+          setConnected(true);
+          Alert.alert("Connected", "Successfully connected to Arduino Nano 33 BLE Sense Rev2!");
+        }
+      });
 
-            const connectedDevice = await scannedDevice.connect();
-            setDevice(connectedDevice);
-            Alert.alert("Connected", "Successfully connected to Arduino Nano 33 BLE Sense Rev2!");
-          }
-        });
-
-        // Stop scanning after 10s
-        setTimeout(() => bleManager.stopDeviceScan(), 10000);
-      } catch(err){
-        console.error("Connection error: ", err);
-      }
+      setTimeout(() => bleManager.stopDeviceScan(), 10000);
     } else {
       if (device) {
         await device.cancelConnection();
         setDevice(null);
+        setConnected(false);
         Alert.alert("Disconnected", "Bluetooth disconnected from Arduino.");
       }
     }
   };
 
+  useEffect(() => {
+    if (!device) return;
+
+    let isMounted = true;
+
+    const setup = async () => {
+      try {
+        console.log("Waiting for BLE services...");
+
+        const connectedDevice = await device.discoverAllServicesAndCharacteristics();
+
+        if (!isMounted) return;
+
+        console.log("Setting up ML state listener...");
+
+        const subscription = connectedDevice.monitorCharacteristicForService(
+          "12345678-1234-1234-1234-1234567890ab",
+          "99999999-1111-2222-3333-444444444444",
+          (error, characteristic) => {
+            if (error) {
+              console.log("Monitor error:", error);
+              return;
+            }
+
+            if (!characteristic?.value) return;
+
+            const msg = base64.decode(characteristic.value);
+            console.log("Received from Arduino:", msg);
+
+            if (msg.startsWith("ML:")) {
+              const isActive = msg.endsWith("1");
+              setSessionActive(isActive);
+            }
+          }
+        );
+
+        // Clean up on unmount
+        return () => {
+          subscription?.remove();
+        };
+
+      } catch (err) {
+        console.log("BLE setup error:", err);
+      }
+    };
+
+    setup();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [device]);
+
+  // const handleBluetoothToggle = async (value: boolean) => {
+  //   setBluetoothConnected(value);
+
+  //   if (value) {
+  //     try{
+  //       console.log("Scanning for Arduino...");
+  //       bleManager.startDeviceScan(null, null, async (error, scannedDevice) => {
+  //         if (error) {
+  //           console.error(error);
+  //           return;
+  //         }
+
+  //         if (scannedDevice?.name === ARDUINO_NAME) {
+  //           console.log("Arduino found!");
+  //           bleManager.stopDeviceScan();
+
+  //           const connectedDevice = await scannedDevice.connect();
+  //           setDevice(connectedDevice);
+  //           Alert.alert("Connected", "Successfully connected to Arduino Nano 33 BLE Sense Rev2!");
+  //         }
+  //       });
+
+  //       // Stop scanning after 10s
+  //       setTimeout(() => bleManager.stopDeviceScan(), 10000);
+  //     } catch(err){
+  //       console.error("Connection error: ", err);
+  //     }
+  //   } else {
+  //     if (device) {
+  //       await device.cancelConnection();
+  //       setDevice(null);
+  //       Alert.alert("Disconnected", "Bluetooth disconnected from Arduino.");
+  //     }
+  //   }
+  // };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Automatic Stabilization</Text>
 
-      <GradientButton onToggle={handleButtonPress} />
+      <GradientButton active={sessionActive} onToggle={handleButtonPress} />
 
       {/* Cards */}
       <View style={styles.cardsContainer}>
@@ -166,7 +253,7 @@ const HomeScreen = () => {
       <View style={styles.bluetoothContainer}>
         <Text style={styles.bluetoothLabel}>Connect to Bluetooth</Text>
         <Switch
-          value={bluetoothConnected}
+          value={connected}
           onValueChange={handleBluetoothToggle}
           trackColor={{ false: "#ccc", true: "#34C759" }}
           thumbColor="#fff"
