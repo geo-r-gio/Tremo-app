@@ -7,20 +7,23 @@ import * as Sharing from "expo-sharing";
 
 export type TremorPoint = {
   value: number;
-  timestamp?: string;
+  label: string;
 };
 
 export type FrequencyPoint = {
   value: number;
+  timestamp?: string;
 };
 
 export type TremorSession = {
+  id: string;
   date: string;
   mode: string;
-  duration: string;
+  duration: string; // string for PDF
   before: number;
   after: number;
-  reduction: string;
+  reduction: number; // keep as number
+  avgFrequency: number;
 };
 
 // Props expected by generatePDFReport()
@@ -39,11 +42,15 @@ export async function generatePDFReport({
   frequencyData,
   sessions,
 }: PDFReportProps): Promise<void> {
-  // Safe average tremor calculation
+  // Safe averages
   const avgTremor =
     tremorData.length > 0
-      ? tremorData.reduce((a: number, b: TremorPoint) => a + b.value, 0) /
-        tremorData.length
+      ? tremorData.reduce((sum, p) => sum + p.value, 0) / tremorData.length
+      : 0;
+
+  const avgFreqAcrossSessions =
+    sessions.length > 0
+      ? sessions.reduce((sum, s) => sum + s.avgFrequency, 0) / sessions.length
       : 0;
 
   const html = `
@@ -51,26 +58,30 @@ export async function generatePDFReport({
       <body style="font-family: Arial; padding: 20px;">
         <h1>Tremor Report</h1>
 
-        <h2>Weekly Summary</h2>
-        <p><strong>Average Tremor:</strong> ${avgTremor.toFixed(2)} g</p>
+        <h2>Weekly / Monthly Summary</h2>
+        <p><strong>Average Tremor (chart):</strong> ${avgTremor.toFixed(2)} Hz</p>
+        <p><strong>Average Frequency (sessions):</strong> ${avgFreqAcrossSessions.toFixed(2)} Hz</p>
+        <p><strong>Total Sessions:</strong> ${sessions.length}</p>
 
-        <h2>Tremor Sessions</h2>
+        <h2>Tremor Sessions Details</h2>
         ${sessions
           .map(
-            (s: TremorSession) => `
-              <div style="margin-bottom: 12px;">
-                <strong>Date:</strong> ${s.date}<br/>
-                <strong>Mode:</strong> ${s.mode}<br/>
-                <strong>Duration:</strong> ${s.duration}<br/>
-                <strong>Before:</strong> ${s.before} g<br/>
-                <strong>After:</strong> ${s.after} g<br/>
-                <strong>Reduction:</strong> ${s.reduction}
-              </div>
-            `
+            (s) => `
+            <div style="margin-bottom: 12px; padding: 8px; border: 1px solid #ccc; border-radius: 8px;">
+              <strong>ID:</strong> ${s.id}<br/>
+              <strong>Date:</strong> ${s.date}<br/>
+              <strong>Mode:</strong> ${s.mode}<br/>
+              <strong>Duration:</strong> ${s.duration}<br/>
+              <strong>Before:</strong> ${s.before} g<br/>
+              <strong>After:</strong> ${s.after} g<br/>
+              <strong>Reduction:</strong> ${s.reduction.toFixed(2)} g<br/>
+              <strong>Avg. Frequency:</strong> ${s.avgFrequency.toFixed(2)} Hz
+            </div>
+          `
           )
           .join("")}
 
-        <h2>Tremor Intensity Data</h2>
+        <h2>Tremor Chart Data</h2>
         <pre>${JSON.stringify(tremorData, null, 2)}</pre>
 
         <h2>Frequency Data</h2>
