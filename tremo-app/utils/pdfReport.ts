@@ -53,39 +53,103 @@ export async function generatePDFReport({
       ? sessions.reduce((sum, s) => sum + s.avgFrequency, 0) / sessions.length
       : 0;
 
+  const totalReduction =
+    sessions.length > 0
+      ? sessions.reduce((sum, s) => sum + s.reduction, 0)
+      : 0;
+
   const html = `
     <html>
-      <body style="font-family: Arial; padding: 20px;">
-        <h1>Tremor Report</h1>
+      <body style="font-family: Arial; padding: 24px; background: #f7fafe;">
 
-        <h2>Weekly / Monthly Summary</h2>
-        <p><strong>Average Tremor (chart):</strong> ${avgTremor.toFixed(2)} Hz</p>
-        <p><strong>Average Frequency (sessions):</strong> ${avgFreqAcrossSessions.toFixed(2)} Hz</p>
-        <p><strong>Total Sessions:</strong> ${sessions.length}</p>
+        <!-- HEADER -->
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #1e4fa3; margin: 0;">Patient Tremor Assessment Report</h1>
+          <p style="color: #555; font-size: 14px; margin-top: 6px;">
+            Generated on ${new Date().toLocaleDateString()}
+          </p>
+        </div>
 
-        <h2>Tremor Sessions Details</h2>
+        <!-- SUMMARY SECTION -->
+        <div style="display: flex; gap: 16px; margin-bottom: 28px;">
+          <div style="flex: 1; background: #e9f2ff; padding: 14px; border-radius: 10px;">
+            <h3 style="margin: 0; color: #1e4fa3;">Average Tremor</h3>
+            <p style="font-size: 22px; margin: 4px 0;"><strong>${avgTremor.toFixed(
+              2
+            )} Hz</strong></p>
+          </div>
+
+          <div style="flex: 1; background: #e9f2ff; padding: 14px; border-radius: 10px;">
+            <h3 style="margin: 0; color: #1e4fa3;">Avg Session Frequency</h3>
+            <p style="font-size: 22px; margin: 4px 0;"><strong>${avgFreqAcrossSessions.toFixed(
+              2
+            )} Hz</strong></p>
+          </div>
+
+          <div style="flex: 1; background: #e9f2ff; padding: 14px; border-radius: 10px;">
+            <h3 style="margin: 0; color: #1e4fa3;">Total Reduction</h3>
+            <p style="font-size: 22px; margin: 4px 0;"><strong>${totalReduction.toFixed(
+              2
+            )} %</strong></p>
+          </div>
+        </div>
+
+        <!-- SESSIONS SECTION -->
+        <h2 style="color: #1e4fa3; border-bottom: 2px solid #c7d7f5; padding-bottom: 4px;">
+          Session Summary
+        </h2>
+
         ${sessions
           .map(
             (s) => `
-            <div style="margin-bottom: 12px; padding: 8px; border: 1px solid #ccc; border-radius: 8px;">
-              <strong>ID:</strong> ${s.id}<br/>
-              <strong>Date:</strong> ${s.date}<br/>
-              <strong>Mode:</strong> ${s.mode}<br/>
-              <strong>Duration:</strong> ${s.duration}<br/>
-              <strong>Before:</strong> ${s.before} g<br/>
-              <strong>After:</strong> ${s.after} g<br/>
-              <strong>Reduction:</strong> ${s.reduction.toFixed(2)} g<br/>
-              <strong>Avg. Frequency:</strong> ${s.avgFrequency.toFixed(2)} Hz
-            </div>
-          `
+              <div style="
+                background: white;
+                padding: 14px;
+                margin-top: 14px;
+                border-radius: 10px;
+                border: 1px solid #d8e2f3;
+              ">
+                <p><strong>Date:</strong> ${s.date}</p>
+                <p><strong>Mode:</strong> ${s.mode}</p>
+                <p><strong>Duration:</strong> ${s.duration} sec</p>
+                <p><strong>Baseline (Before):</strong> ${s.before} g</p>
+                <p><strong>Post-Therapy (After):</strong> ${s.after} g</p>
+                <p><strong>Reduction:</strong> ${s.reduction.toFixed(2)} g</p>
+                <p><strong>Average Frequency:</strong> ${s.avgFrequency.toFixed(
+                  2
+                )} Hz</p>
+              </div>
+            `
           )
           .join("")}
 
-        <h2>Tremor Chart Data</h2>
-        <pre>${JSON.stringify(tremorData, null, 2)}</pre>
+        <!-- TREND SECTION -->
+        <h2 style="color: #1e4fa3; border-bottom: 2px solid #c7d7f5; padding-bottom: 4px; margin-top: 30px;">
+          Daily Tremor Trend (Averages)
+        </h2>
 
-        <h2>Frequency Data</h2>
-        <pre>${JSON.stringify(frequencyData, null, 2)}</pre>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr style="background: #e7efff;">
+            <th style="padding: 8px; text-align: left;">Day</th>
+            <th style="padding: 8px; text-align: left;">Value (Hz)</th>
+          </tr>
+          ${tremorData
+            .map(
+              (p) => `
+                <tr>
+                  <td style="padding: 8px;">${p.label}</td>
+                  <td style="padding: 8px;">${p.value.toFixed(2)}</td>
+                </tr>
+              `
+            )
+            .join("")}
+        </table>
+
+        <!-- FOOTER -->
+        <p style="text-align: center; margin-top: 40px; color: #888; font-size: 12px;">
+          This report summarizes tremor activity measured using your wearable device.
+          It is intended for clinical reference and progression tracking.
+        </p>
       </body>
     </html>
   `;

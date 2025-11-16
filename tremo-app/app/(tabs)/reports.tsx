@@ -49,6 +49,9 @@ export default function ReportsScreen() {
   const tremorFreqsRef = useRef<number[]>([]);
   const subscriptionRef = useRef<any>(null);
 
+  // ⬅ NEW: protect persistence until after initial load
+  const hasLoadedRef = useRef(false);
+
   // summaries
   const [weeklySummary, setWeeklySummary] = useState({ avgSuppressionFreq: 0, effectiveSessions: '0/0' });
   const [monthlySummary, setMonthlySummary] = useState({ activeSuppressionTime: 0, tremorShiftFrom: 0, tremorShiftTo: 0 });
@@ -88,6 +91,7 @@ export default function ReportsScreen() {
   // ----------------------------------------
   useEffect(() => {
     let mounted = true;
+
     const load = async () => {
       try {
         const savedSessions = await AsyncStorage.getItem('sessions');
@@ -95,32 +99,46 @@ export default function ReportsScreen() {
 
         if (!mounted) return;
 
-        if (savedSessions) setSessions(JSON.parse(savedSessions));
-        if (savedAvgPeaks) setAvgPeakData(JSON.parse(savedAvgPeaks));
+        const parsedSessions = savedSessions ? JSON.parse(savedSessions) : [];
+        const parsedPeaks = savedAvgPeaks ? JSON.parse(savedAvgPeaks) : [];
+
+        setSessions(parsedSessions);
+        setAvgPeakData(parsedPeaks);
+
+        console.log("Loaded sessions:", parsedSessions);
+        console.log("Loaded avgPeakData:", parsedPeaks);
+
+        // ⬅ Enable saving AFTER initial load
+        hasLoadedRef.current = true;
+
       } catch (e) {
         console.warn('Failed to load persisted data', e);
       }
     };
+
     load();
     return () => {
       mounted = false;
     };
   }, []);
 
-  // persist when sessions or avgPeakData change (non-blocking)
+  // ----------------------------------------
+  // Protected persistence (ONLY after load)
+  // ----------------------------------------
   useEffect(() => {
+    if (!hasLoadedRef.current) return;     // ⬅ prevents overwriting storage with []
     persistSessions(sessions);
   }, [sessions, persistSessions]);
 
   useEffect(() => {
+    if (!hasLoadedRef.current) return;     // ⬅ prevents overwriting storage with []
     persistAvgPeaks(avgPeakData);
   }, [avgPeakData, persistAvgPeaks]);
 
   // -----------------------------
-  // BLE monitor setup (DISCOVER -> MONITOR)
+  // BLE monitor setup
   // -----------------------------
   useEffect(() => {
-    // cleanup previous subscription
     const cleanup = () => {
       try {
         subscriptionRef.current?.remove?.();
@@ -136,10 +154,10 @@ export default function ReportsScreen() {
     const setup = async () => {
       try {
         console.log('[BLE] Discovering services & characteristics...');
-        // this is required before monitoring
         await device.discoverAllServicesAndCharacteristics();
         if (!mounted) return;
-        console.log('[BLE] Discovery complete — subscribing to characteristic...');
+
+        console.log('[BLE] Discovery complete — subscribing...');
 
         subscriptionRef.current = device.monitorCharacteristicForService(
           CONTROL_SERVICE_UUID,
@@ -152,24 +170,19 @@ export default function ReportsScreen() {
             if (!char?.value) return;
 
             const decoded = base64.decode(char.value).trim();
-            // debug raw
             console.log('[BLE DECODED]', decoded);
 
-            // ignore non-JSON control lines like "ML:1" here (we still log above)
-            if (!decoded.startsWith('{')) {
-              // optionally handle "ML:1" notifications if needed
-              return;
-            }
+            if (!decoded.startsWith('{')) return;
 
             let data: any = null;
             try {
               data = JSON.parse(decoded);
-            } catch (e) {
-              console.warn('[BLE PARSE FAILED]', e, decoded);
+            } catch {
+              console.warn('[BLE PARSE FAILED]', decoded);
               return;
             }
 
-            // START event
+            // START
             if (data.event === 'START') {
               const newSession: TremorSession = {
                 id: generateUniqueId(),
@@ -183,30 +196,31 @@ export default function ReportsScreen() {
               };
               currentSessionRef.current = newSession;
               tremorFreqsRef.current = [];
-              setLivePoints([]); // fresh live plot
+              setLivePoints([]);
               console.log('[BLE] START received', newSession);
               return;
             }
 
-            // frequency update during session
+            // LIVE freq
             if (data.freq !== undefined && currentSessionRef.current) {
               tremorFreqsRef.current = [...tremorFreqsRef.current, Number(data.freq)];
+
               const point: PeakDataPoint = {
                 value: Number(data.freq),
-                label: '', // intentionally blank while live
+                label: '',
                 date: new Date().toLocaleTimeString(),
               };
-              // keep last ~20 live points
+
               setLivePoints(prev => [...prev.slice(-19), point]);
-              // debug
-              // console.log('[BLE] LIVE freq', data.freq);
               return;
             }
 
-            // STOP event -> finalize session
+            // STOP
             if (data.event === 'STOP' && currentSessionRef.current) {
               const freqs = tremorFreqsRef.current;
-              const avgFreq = freqs.length ? freqs.reduce((a, b) => a + b, 0) / freqs.length : 0;
+              const avgFreq = freqs.length
+                ? freqs.reduce((a, b) => a + b, 0) / freqs.length
+                : 0;
 
               const finishedSession: TremorSession = {
                 ...currentSessionRef.current,
@@ -216,27 +230,47 @@ export default function ReportsScreen() {
                 avgFrequency: avgFreq,
               };
 
-              // update sessions + persist
+              // 1) Append session
               setSessions(prev => {
                 const next = [...prev, finishedSession];
                 persistSessions(next);
                 return next;
               });
 
-              // append single average point (with day label) and persist
-              const dayLabel = getDayAbbreviation(currentSessionRef.current.date);
+              const day = currentSessionRef.current.date;
+              const dayLabel = getDayAbbreviation(day);
+
+              // 2) Recalculate ONE avg point for this day
               setAvgPeakData(prev => {
-                const next = [...prev, { value: parseFloat(avgFreq.toFixed(2)), label: dayLabel }];
+                // find all sessions belonging to this day
+                const sessionsForDay = sessions
+                  .concat(finishedSession)
+                  .filter(s => s.date === day);
+
+                // compute their average
+                const dayAverage =
+                  sessionsForDay.reduce((a, s) => a + s.avgFrequency, 0) /
+                  sessionsForDay.length;
+
+                const newPoint: PeakDataPoint = {
+                  value: parseFloat(dayAverage.toFixed(2)),
+                  label: dayLabel,
+                  date: day,
+                };
+
+                // remove old points for this day and insert the new one
+                const filtered = prev.filter(p => p.date !== day);
+                const next = [...filtered, newPoint];
+
                 persistAvgPeaks(next);
                 return next;
               });
 
-              // reset live
               currentSessionRef.current = null;
               tremorFreqsRef.current = [];
               setLivePoints([]);
-              console.log('[BLE] STOP received', finishedSession);
-              return;
+
+              console.log("[BLE] STOP — daily avg point saved");
             }
           }
         );
@@ -304,7 +338,7 @@ export default function ReportsScreen() {
 
       {/* Chart */}
       <View style={styles.chartCard}>
-        <Text style={styles.chartTitle}>Live Peak Suppression Tremor</Text>
+        <Text style={styles.chartTitle}>Live Peak Suppression Tremor (Avg.)</Text>
         <LineChart
           data={chartData}
           curved
