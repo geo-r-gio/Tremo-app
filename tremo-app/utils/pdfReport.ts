@@ -112,9 +112,9 @@ export async function generatePDFReport({
                 <p><strong>Date:</strong> ${s.date}</p>
                 <p><strong>Mode:</strong> ${s.mode}</p>
                 <p><strong>Duration:</strong> ${s.duration} sec</p>
-                <p><strong>Baseline (Before):</strong> ${s.before} g</p>
-                <p><strong>Post-Therapy (After):</strong> ${s.after} g</p>
-                <p><strong>Reduction:</strong> ${s.reduction.toFixed(2)} g</p>
+                <p><strong>Baseline (Before):</strong> ${s.before} Hz</p>
+                <p><strong>Post-Therapy (After):</strong> ${s.after} Hz</p>
+                <p><strong>Reduction:</strong> ${s.reduction.toFixed(2)} %</p>
                 <p><strong>Average Frequency:</strong> ${s.avgFrequency.toFixed(
                   2
                 )} Hz</p>

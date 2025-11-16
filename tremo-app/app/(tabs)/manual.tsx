@@ -5,6 +5,7 @@ import RadialVariant from "../../components/RadialVariant";
 import { LinearGradient } from "expo-linear-gradient";
 import base64 from 'react-native-base64';
 import { useBLE } from "@/context/BLEContext";
+import { colors } from "@/constants/theme";
 
 const vibrationPatterns = [
   { id: 1, icon: "Waves", title: "Gentle Wave", desc: "Smooth, continuous" },
@@ -165,10 +166,19 @@ const ManualScreen = () => {
                 <Text style={styles.intensityButtonText}>−</Text>
               </TouchableOpacity>
 
-              <View style={styles.intensityBarContainer}>
+              {/* <View style={styles.intensityBarContainer}>
                 <LinearGradient
                   colors={["#6baccd", "#0c5197"]}
                   style={[styles.intensityBar, { width: `${(intensity / 5) * 100}%` }]}
+                />
+              </View> */}
+
+              <View style={styles.intensityBarContainer}>
+                <View
+                  style={[
+                    styles.intensityBar,
+                    { width: `${(intensity / 5) * 100}%`, backgroundColor: colors.primaryDark },
+                  ]}
                 />
               </View>
 
@@ -179,7 +189,7 @@ const ManualScreen = () => {
           </View>
 
           {/* Apply Settings Button */}
-          <LinearGradient
+          {/* <LinearGradient
             colors={["#6baccd", "#0c5197"]}
             style={styles.applyButton}
             start={[0, 0]}
@@ -188,7 +198,15 @@ const ManualScreen = () => {
             <TouchableOpacity activeOpacity={0.8} onPress={handleApplySettings}>
               <Text style={styles.applyText}>Apply Settings</Text>
             </TouchableOpacity>
-          </LinearGradient>
+          </LinearGradient> */}
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleApplySettings}
+            style={styles.applyButton}
+          >
+            <Text style={styles.applyText}>Apply Settings</Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
       {/* </ScrollView> */}
@@ -297,6 +315,7 @@ const styles = StyleSheet.create({
     borderRadius: 8 
   },
   applyButton: { 
+    backgroundColor: colors.primaryDark,
     borderRadius: 16, 
     paddingVertical: 16, 
     alignItems: "center", 

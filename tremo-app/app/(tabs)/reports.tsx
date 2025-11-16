@@ -325,11 +325,27 @@ export default function ReportsScreen() {
   // PDF Export
   // -----------------------------
   const handleDownloadReport = async () => {
-    await generatePDFReport({
-      tremorData: avgPeakData,
-      frequencyData: tremorFreqsRef.current.map(v => ({ value: v })),
-      sessions: sessions.map(s => ({ ...s, duration: s.duration.toString(), after: s.after, avgFrequency: s.avgFrequency })),
-    });
+    if (!sessions.length) {
+      console.warn("No sessions available for PDF export");
+      return;
+    }
+
+    // pick the latest completed session
+    const latestSession = sessions[sessions.length - 1];
+
+    // prepare data for PDF
+    const pdfData = {
+      tremorData: avgPeakData, // you can keep the avg chart data if needed
+      frequencyData: tremorFreqsRef.current.map(v => ({ value: v })), // live frequency points
+      sessions: [{
+        ...latestSession,
+        duration: latestSession.duration.toString(), // ensure string if required by PDF generator
+        after: latestSession.after,
+        avgFrequency: latestSession.avgFrequency,
+      }],
+    };
+
+    await generatePDFReport(pdfData);
   };
  
   return (
