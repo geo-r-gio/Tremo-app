@@ -16,7 +16,13 @@ import * as Notifications from 'expo-notifications';
 export default function ProfileScreen() {
   const [remindersEnabled, setRemindersEnabled] = useState(true);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [reminderTime, setReminderTime] = useState(new Date(2024, 0, 1, 9, 0));
+  const [reminderTime, setReminderTime] = useState(() => {
+    const now = new Date();
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    return now;
+  });
 
   /* --------------------------
       LOCAL NOTIFICATIONS SETUP
@@ -64,6 +70,7 @@ export default function ProfileScreen() {
     setRemindersEnabled(value);
 
     if (!value) {
+      setShowTimePicker(false);
       await Notifications.cancelAllScheduledNotificationsAsync();
     } else {
       await scheduleDailyReminder(reminderTime);
@@ -139,7 +146,7 @@ export default function ProfileScreen() {
           </View>
 
           <View style={styles.rowBetween}>
-            <View>
+            <View style={styles.reminderTextBlock}>
               <Text style={styles.label}>Enable Daily Reminders</Text>
               <Text style={styles.description}>
                 Get notified to start your tremor monitoring session
@@ -169,12 +176,15 @@ export default function ProfileScreen() {
           )}
 
           {showTimePicker && (
-            <DateTimePicker
-              value={reminderTime}
-              mode="time"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={onChangeTime}
-            />
+            <View style={{ height: 200 }}>
+              <DateTimePicker
+                value={reminderTime}
+                mode="time"
+                display="spinner"
+                themeVariant="light"
+                onChange={onChangeTime}
+              />
+            </View>
           )}
         </View>
 
@@ -283,6 +293,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+
+  reminderTextBlock: {
+    flexShrink: 1,
+    maxWidth: "75%", // prevents text from pushing the switch
+    paddingRight: 10,
   },
 
   timeInput: {
