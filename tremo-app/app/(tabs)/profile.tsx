@@ -12,6 +12,12 @@ import {
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Notifications from 'expo-notifications';
+import { useAuth } from "@/context/authContext";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, verifyBeforeUpdateEmail } from "firebase/auth";
+import { Alert } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
   const [remindersEnabled, setRemindersEnabled] = useState(true);
@@ -23,6 +29,98 @@ export default function ProfileScreen() {
     now.setMilliseconds(0);
     return now;
   });
+
+  //For fetching full name from firebase
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const {user, signout} = useAuth();
+  //for logout
+  const router = useRouter();
+
+
+  // For editing email
+  const [emailModalVisible, setEmailModalVisible] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState("");
+
+  // For editing password
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [currentPasswordForPassword, setCurrentPasswordForPassword] = useState("");
+
+
+  /* --------------------------
+      REAUTHENTICATION HELPER
+  ---------------------------*/
+
+  async function reauthenticate(password:string) {
+    try{
+      const credential = EmailAuthProvider.credential(user.email, password);
+      return await reauthenticateWithCredential(user, credential);
+    }catch(error){
+      console.log("Reauthentication error: ",error);
+      throw error;
+    }
+    
+  }
+
+   /* --------------------------
+      CHANGE EMAIL FUNCTION
+  ---------------------------*/
+
+  async function handleChangeEmail() {
+    try{
+      if(!newEmail || !currentPasswordForEmail){
+        alert("Please fill in all fields");
+        return;
+      }
+
+      await reauthenticate(currentPasswordForEmail);
+
+      await verifyBeforeUpdateEmail(user, newEmail);
+
+      alert("Verification email sent!\n\nPlease check your new email inbox and click the verification link to complete the update");
+
+      setEmailModalVisible(false);
+      setNewEmail("");
+      setCurrentPasswordForEmail("");
+
+    }catch (error:any) {
+      console.log("Email update error: ", error);
+      alert(error?.message || "Could not update email. Try again.")
+    }
+    
+  }
+
+
+  /* --------------------------
+      CHANGE PASSWORD FUNCTION
+  ---------------------------*/
+
+  async function handleChangePassword() {
+    try{
+      if(!newPassword || !currentPasswordForPassword){
+        alert("Please fill in all fields");
+        return;
+      }
+
+      await reauthenticate(currentPasswordForPassword);
+
+      await updatePassword(user, newPassword);
+
+      
+      alert("Password updated successfully!");
+
+      setPasswordModalVisible(false);
+      setNewPassword("");
+      setCurrentPasswordForPassword("");
+
+    }catch (error:any) {
+      console.log("Password update error: ", error);
+      alert(error?.message || "Could not update password. Try again.")
+    }
+    
+  }
 
   /* --------------------------
       LOCAL NOTIFICATIONS SETUP
@@ -41,6 +139,27 @@ export default function ProfileScreen() {
 
     requestPermissions();
   }, []);
+
+  /* --------------------------
+      LOAD USER DATA FROM FIREBASE
+  ---------------------------*/
+  useEffect(()=> {
+    async function loadUserData() {
+      if(!user) return;
+
+      setEmail(user.email);
+      
+      const ref = doc(db,"users", user.uid);
+      const snap = await getDoc(ref);
+
+      if(snap.exists()){
+        setFullName(snap.data().name || "");
+      }
+      
+    }
+
+    loadUserData();
+  },[user]);
 
   const scheduleDailyReminder = async (time: Date) => {
     try {
@@ -93,6 +212,33 @@ export default function ProfileScreen() {
     const displayMinutes = minutes.toString().padStart(2, "0");
     return `${displayHour}:${displayMinutes} ${ampm}`;
   };
+  
+    /* --------------------------
+      LOGOUT CONFIRMATION MESSAGE
+  ---------------------------*/
+  const confirmLogout = () => {
+    Alert.alert(
+      "Sign Out",
+      "Are you sure you want to sign out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Sign Out",
+          style: "destructive",
+          onPress: async () => {
+            const result = await signout();
+
+            if (!result.success) {
+              alert(result.msg || "Logout failed");
+              return;
+            }
+
+            router.replace("/(auth)/signin");
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 130 }}>
@@ -110,10 +256,10 @@ export default function ProfileScreen() {
           </View>
 
           <Text style={styles.label}>Full Name</Text>
-          <TextInput editable={false} value="John Doe" style={styles.input} />
+          <TextInput editable={false} value={fullName} style={styles.input} />
 
           <Text style={styles.label}>Email Address</Text>
-          <TextInput editable={false} value="john.doe@email.com" style={styles.input} />
+          <TextInput editable={false} value={email} style={styles.input} />
         </View>
 
         {/* SECURITY */}
@@ -125,12 +271,12 @@ export default function ProfileScreen() {
             <Text style={styles.cardTitle}>Security</Text>
           </View>
 
-          <TouchableOpacity style={styles.buttonRow}>
+          <TouchableOpacity style={styles.buttonRow} onPress={() => setEmailModalVisible(true)}>
             <MaterialIcons name="email" size={20} color="#444" />
             <Text style={styles.buttonRowText}>Change Email</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buttonRow}>
+          <TouchableOpacity style={styles.buttonRow} onPress={() => setPasswordModalVisible(true)}>
             <Ionicons name="lock-closed-outline" size={20} color="#444" />
             <Text style={styles.buttonRowText}>Change Password</Text>
           </TouchableOpacity>
@@ -189,11 +335,102 @@ export default function ProfileScreen() {
         </View>
 
         {/* SIGN OUT BUTTON */}
-        <TouchableOpacity style={styles.signOutBtn}>
+        <TouchableOpacity style={styles.signOutBtn} onPress={confirmLogout}>
           <Ionicons name="log-out-outline" size={20} color="#fff" />
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
+
+      {/* -------------------------
+          CHANGE EMAIL MODAL
+        -------------------------- */}
+      {emailModalVisible && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Change Email</Text>
+
+            <Text style={styles.label}>New Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter new email"
+              autoCapitalize="none"
+              value={newEmail}
+              onChangeText={setNewEmail}
+            />
+
+            <Text style={styles.label}>Current Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter current password"
+              secureTextEntry
+              value={currentPasswordForEmail}
+              onChangeText={setCurrentPasswordForEmail}
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: "#E55656" }]}
+                onPress={() => setEmailModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: "#5A5CE4" }]}
+                onPress={handleChangeEmail}
+              >
+                <Text style={styles.modalButtonText}>Update</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+
+      {/* -------------------------
+        CHANGE PASSWORD MODAL
+        -------------------------- */}
+      {passwordModalVisible && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Change Password</Text>
+
+            <Text style={styles.label}>New Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter new password"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+             />
+
+            <Text style={styles.label}>Current Password</Text>
+             <TextInput
+              style={styles.input}
+              placeholder="Enter current password"
+              secureTextEntry
+              value={currentPasswordForPassword}
+              onChangeText={setCurrentPasswordForPassword}
+             />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: "#E55656" }]}
+              onPress={() => setPasswordModalVisible(false)}
+                >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: "#5A5CE4" }]}
+                onPress={handleChangePassword}
+                >
+              <Text style={styles.modalButtonText}>Update</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+    )}
     </ScrollView>
   );
 }
@@ -331,5 +568,55 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 6,
+  },
+
+  // change email
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    zIndex: 999,
+  },
+
+  modalContainer: {
+    width: "100%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 16,
+    elevation: 5,
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#222",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+
+  modalButton: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 4,
+  },
+
+  modalButtonText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
   },
 });
