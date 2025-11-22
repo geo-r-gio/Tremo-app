@@ -97,6 +97,7 @@ export default function ReportsScreen() {
 
     const load = async () => {
       try {
+        // await AsyncStorage.removeItem("avgPeakData");
         const savedSessions = await AsyncStorage.getItem('sessions');
         const savedAvgPeaks = await AsyncStorage.getItem('avgPeakData');
 
@@ -234,6 +235,25 @@ export default function ReportsScreen() {
                 reduction: data.reduction || 0,
                 avgFrequency: avgFreq,
               };
+
+              if (user) {
+                (async () => {
+                  try {
+                  await saveSessionToFirestore({
+                     userId: user.uid,
+                     mode: finishedSession.mode,
+                     duration: finishedSession.duration,
+                     before: finishedSession.before,
+                     after: finishedSession.after,
+                     avgFrequency: finishedSession.avgFrequency,
+                     reduction: finishedSession.reduction,
+                      });
+                  console.log("[FIRESTORE] Session saved successfully!");
+                  } catch (err) {
+                  console.warn("[FIRESTORE] Failed to save session:", err);
+                  }
+                  })();
+              }
 
               setSessions(prev => {
                 const next = [...prev, finishedSession];
@@ -391,7 +411,7 @@ export default function ReportsScreen() {
           <Text style={styles.summaryLabel}>Effective Sessions</Text>
           <View style={styles.summaryRow3}>
             <Text style={styles.summaryValue2}>{weeklySummary.effectiveSessions}</Text>
-            <Text style={styles.summaryNote}>with {'>'} 50% tremor reduction</Text>
+            <Text style={styles.summaryNote}>with {'>'} 30% tremor reduction</Text>
           </View>
         </View>
       </View>
