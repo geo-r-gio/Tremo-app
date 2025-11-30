@@ -200,7 +200,7 @@ export default function ReportsScreen() {
               const newSession: TremorSession = {
                 id: generateUniqueId(),
                 date: new Date().toISOString().split('T')[0],
-                mode: data.mode || 'ML',
+                mode: 'Automatic',
                 duration: 0,
                 before: data.before || 0,
                 after: 0,
