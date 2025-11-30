@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import * as Icons from "phosphor-react-native";
 import RadialVariant from "../../components/RadialVariant";
@@ -49,6 +49,12 @@ const ManualScreen = () => {
       console.log("BLE write error:", err, err.reason);
     }
   };
+
+  const handleRadialValueChange = useCallback((newVal: number) => {
+    const finalVal = Math.round(newVal); 
+
+    setRadialIntensity(finalVal);
+  }, []);
 
 
 // const sendBLEMessage = async (message: any) => {
@@ -107,7 +113,7 @@ const ManualScreen = () => {
           {/* <RadialVariant /> */}
           <RadialVariant 
             value={radialIntensity}
-            onValueChange={setRadialIntensity}
+            onValueChange={handleRadialValueChange}
           />
         </View>
       </View>
