@@ -13,8 +13,6 @@ const data: OnboardingData[] = [
     id: '1',
     animation: require('../assets/animations/Lottie1.json'),
     text: 'Welcome to Tremo! Your companion for managing hand tremors. 👋🏼',
-    // textColor: '#005b4f',
-    // backgroundColor: '#ffa3ce',
     textColor: '#1e2169',
     backgroundColor: '#bae4fd',
   },
@@ -22,8 +20,6 @@ const data: OnboardingData[] = [
     id: '2',
     animation: require('../assets//animations/Lottie2.json'),
     text: 'Tremo detects tremors in real-time using smart sensors and counteracts shaking with gentle vibrations.',
-    // textColor: '#1e2169',
-    // backgroundColor: '#bae4fd',
     textColor: '#005b4f',
     backgroundColor: '#bafdd6'
   },

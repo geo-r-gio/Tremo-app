@@ -63,9 +63,7 @@ const CustomButton = ({dataLength, flatlistIndex, flatlistRef, x}: Props) => {
                 if(flatlistIndex.value < dataLength - 1){
                     flatlistRef.current?.scrollToIndex({index: flatlistIndex.value + 1})
                 } else {
-                    //console.log('NAVIGATE TO NEXT SCREEN')
                     router.push("/signin")
-                    // router.push("/(tabs)/home");
                 }
             }}
         >

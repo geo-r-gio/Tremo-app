@@ -44,9 +44,6 @@ return (
                     color: isFocused ? colors.white : colors.textDark
                 })}
             </Animated.View>
-        {/* <Animated.Text style={[{ color: isFocused ? colors.primary : colors.text, fontSize: 12 }, animatedTextStyle]}>
-            {label}
-        </Animated.Text> */}
     </PlatformPressable>
   )
 }

@@ -49,9 +49,7 @@ export default function ProfileScreen() {
   const [currentPasswordForPassword, setCurrentPasswordForPassword] = useState("");
 
 
-  /* --------------------------
-      REAUTHENTICATION HELPER
-  ---------------------------*/
+  // REAUTHENTICATION HELPER
 
   async function reauthenticate(password:string) {
     try{
@@ -64,10 +62,7 @@ export default function ProfileScreen() {
     
   }
 
-   /* --------------------------
-      CHANGE EMAIL FUNCTION
-  ---------------------------*/
-
+  //  CHANGE EMAIL FUNCTION
   async function handleChangeEmail() {
     try{
       if(!newEmail || !currentPasswordForEmail){
@@ -93,10 +88,7 @@ export default function ProfileScreen() {
   }
 
 
-  /* --------------------------
-      CHANGE PASSWORD FUNCTION
-  ---------------------------*/
-
+  //  CHANGE PASSWORD FUNCTION
   async function handleChangePassword() {
     try{
       if(!newPassword || !currentPasswordForPassword){
@@ -122,9 +114,7 @@ export default function ProfileScreen() {
     
   }
 
-  /* --------------------------
-      LOCAL NOTIFICATIONS SETUP
-  ---------------------------*/
+  //  LOCAL NOTIFICATIONS SETUP
   useEffect(() => {
     const requestPermissions = async () => {
       try {
@@ -140,9 +130,7 @@ export default function ProfileScreen() {
     requestPermissions();
   }, []);
 
-  /* --------------------------
-      LOAD USER DATA FROM FIREBASE
-  ---------------------------*/
+  //  LOAD USER DATA FROM FIREBASE
   useEffect(()=> {
     async function loadUserData() {
       if(!user) return;
@@ -213,9 +201,7 @@ export default function ProfileScreen() {
     return `${displayHour}:${displayMinutes} ${ampm}`;
   };
   
-    /* --------------------------
-      LOGOUT CONFIRMATION MESSAGE
-  ---------------------------*/
+  //  LOGOUT CONFIRMATION MESSAGE
   const confirmLogout = () => {
     Alert.alert(
       "Sign Out",
@@ -341,9 +327,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* -------------------------
-          CHANGE EMAIL MODAL
-        -------------------------- */}
+      {/* CHANGE EMAIL MODAL */}
       {emailModalVisible && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
@@ -387,9 +371,7 @@ export default function ProfileScreen() {
       )}
 
 
-      {/* -------------------------
-        CHANGE PASSWORD MODAL
-        -------------------------- */}
+      {/* CHANGE PASSWORD MODAL */}
       {passwordModalVisible && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
@@ -442,7 +424,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
 
-  /* Page title */
   screenTitle: {
     fontSize: 20,
     fontWeight: "600",
@@ -454,7 +435,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  /* Cards */
   card: {
     backgroundColor: "#fff",
     padding: 18,
@@ -488,7 +468,6 @@ const styles = StyleSheet.create({
     color: "#222",
   },
 
-  /* Inputs */
   label: {
     fontSize: 14,
     color: "#444",
@@ -509,7 +488,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 
-  /* Security button rows */
   buttonRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -525,7 +503,6 @@ const styles = StyleSheet.create({
     color: "#333",
   },
 
-  /* Reminder section */
   rowBetween: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -534,7 +511,7 @@ const styles = StyleSheet.create({
 
   reminderTextBlock: {
     flexShrink: 1,
-    maxWidth: "75%", // prevents text from pushing the switch
+    maxWidth: "75%",
     paddingRight: 10,
   },
 
