@@ -92,7 +92,7 @@ npx expo start
 
 ## 🔧 Project Configuration
 
-# Firebase Setup
+### Firebase Setup
 
 1. Create a Firebase project:
    https://console.firebase.google.com
