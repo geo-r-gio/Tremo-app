@@ -87,3 +87,19 @@ npx expo start
 
 - Scan the QR code with Expo Go
 - Or run on emulator/simulator
+
+---
+
+## 🔧 Project Configuration
+
+# Firebase Setup
+
+1. Create a Firebase project:
+   https://console.firebase.google.com
+
+2. Enable:
+   - Authentication -> Email/Password
+   - Firestore Database
+  
+3. Add your Firebase configuration in your app:
+   - Usually via a firebaseConfig.js or environment variables
